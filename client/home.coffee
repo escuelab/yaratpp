@@ -1,3 +1,4 @@
+### HELPERS ###
 get = (key) ->
   return Session.get key
 set = (key, val)->
@@ -13,6 +14,19 @@ registerHelper 'get', @get
 registerHelper 'el', @get
 registerHelper 'la', @get
 
+### TWITTER ###
+Twitter =
+  initialized: false
+  init: ->
+    settings = Meteor.settings.public
+    @cb = new Codebird
+    @cb.setConsumerKey settings.TWITTER_KEY, settings.TWITTER_SECRET
+    @cb.setToken settings.TWITTER_TOKEN, settings.TWITTER_TOKEN_SECRET
+
+  tweet: ( tuit ) ->
+    @cb.__call "statuses_homeTimeline", {}, (reply) ->
+      console.log reply
+
 tuit = (firmante) ->
   firmante = Template.firmante() unless firmante
   tweets = [
@@ -26,6 +40,7 @@ firmantePorDefecto = 'un ciudadano'
 registerHelper 'firmantePorDefecto', -> firmantePorDefecto
 
 Template.home.created = ->
+  Twitter.init()
   reset 'firmante'
 
 Template.home.tweet = ->
@@ -33,7 +48,9 @@ Template.home.tweet = ->
 
 Template.home.events
   "click #yo-firmo": ->
-    alert tuit( get( 'firmante' ) || firmantePorDefecto )
+    tuit = tuit( get( 'firmante' ) || firmantePorDefecto )
+    alert tuit
+    Twitter.tweet tuit
 
   "change #firmante": (e) ->
     set 'firmante', $( e.currentTarget ).val()
