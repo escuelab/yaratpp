@@ -4,7 +4,7 @@ Firmas = new Meteor.Collection 'firmas'
 
 TwitterClient =
   init: ->
-    settings = Meteor.settings.public
+    settings = Meteor.settings
     @T = new Twitter
       consumer_key:         settings.TWITTER_KEY
       consumer_secret:      settings.TWITTER_SECRET

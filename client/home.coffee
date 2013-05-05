@@ -9,8 +9,10 @@ reset = (key)->
 registerHelper = (p1,p2) ->
   Handlebars.registerHelper p1, p2
 
-registerHelper 'set', @set
-registerHelper 'get', @get
+registerHelper 'set', set
+registerHelper 'get', get
+registerHelper 'getStr', (key) ->
+  JSON.stringify get( key )
 
 # Firmas = new Meteor.Collection 'firmas'
 # Meteor.subscribe 'firmas'
@@ -36,8 +38,18 @@ Template.home.created = ->
   Meteor.call 'twitterInit', (err, result) ->
     console.log err if err
     console.log result
+
   reset 'firmante'
   reset 'mencionado'
+
+  localStorage.clear()
+  sample_url = Meteor.settings.public.GDOC_URL
+  url_parameter = document.location.search.split(/\?url=/)[1]
+  url = url_parameter or sample_url
+  googleSpreadsheet = new GoogleSpreadsheet()
+  googleSpreadsheet.url url
+  googleSpreadsheet.load (result) ->
+    set 'posibles-mencionados', result.data
 
 Template.home.tweet = ->
   return tuit()
@@ -58,3 +70,9 @@ Template.home.events
 
   "change #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
+
+Template.mencionado.rendered = ->
+  posibles = get 'posibles-mencionados'
+
+  $( "#mencionado" ).autocomplete
+    source: posibles
