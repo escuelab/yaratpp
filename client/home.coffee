@@ -14,18 +14,10 @@ registerHelper 'get', @get
 registerHelper 'el', @get
 registerHelper 'la', @get
 
-### TWITTER ###
-Twitter =
-  initialized: false
-  init: ->
-    settings = Meteor.settings.public
-    @cb = new Codebird
-    @cb.setConsumerKey settings.TWITTER_KEY, settings.TWITTER_SECRET
-    @cb.setToken settings.TWITTER_TOKEN, settings.TWITTER_TOKEN_SECRET
+Tokens = new Meteor.Collection 'tokens'
+Meteor.subscribe 'tokens'
 
-  tweet: ( tuit ) ->
-    @cb.__call "statuses_homeTimeline", {}, (reply) ->
-      console.log reply
+### APP ###
 
 tuit = (firmante) ->
   firmante = Template.firmante() unless firmante
@@ -40,7 +32,9 @@ firmantePorDefecto = 'un ciudadano'
 registerHelper 'firmantePorDefecto', -> firmantePorDefecto
 
 Template.home.created = ->
-  Twitter.init()
+  Meteor.call 'twitterInit', (err, result) ->
+    console.log err
+    console.log result
   reset 'firmante'
 
 Template.home.tweet = ->
@@ -48,9 +42,11 @@ Template.home.tweet = ->
 
 Template.home.events
   "click #yo-firmo": ->
-    tuit = tuit( get( 'firmante' ) || firmantePorDefecto )
-    alert tuit
-    Twitter.tweet tuit
+    console.log get( 'firmante' )
+    tuit = tuit( get( 'firmante' ) or firmantePorDefecto )
+    Meteor.call 'twitterTweet', tuit, (err, result) ->
+      console.log err
+      console.log result
 
   "change #firmante": (e) ->
     set 'firmante', $( e.currentTarget ).val()
