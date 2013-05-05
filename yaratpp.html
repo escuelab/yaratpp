@@ -1,0 +1,17 @@
+<head>
+  <title>yaratpp</title>
+</head>
+
+<body>
+  {{>home}}
+</body>
+
+<template name="home">
+  {{{ tweet }}}
+  <input id="yo-firmo" type="button" value="firmo" />
+</template>
+
+<template name="firmante">
+  <input id="firmante" value="{{la 'firmante'}}"
+    placeholder="{{firmantePorDefecto}}">
+</template>
