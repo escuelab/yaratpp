@@ -11,42 +11,45 @@ registerHelper = (p1,p2) ->
 
 registerHelper 'set', @set
 registerHelper 'get', @get
-registerHelper 'el', @get
-registerHelper 'la', @get
-
-Tokens = new Meteor.Collection 'tokens'
-Meteor.subscribe 'tokens'
 
 ### APP ###
 
-tuit = (firmante) ->
+tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
+  mencionado = Template.mencionado() unless mencionado
   tweets = [
-    "----- #{firmante}"
-    "+++++ #{firmante}"
-    "***** #{firmante}"
+    "cc #{mencionado} --asdasdasdas-- #{firmante}"
+    "cc #{mencionado} ++aaaaaaaaaa+++ #{firmante}"
+    "cc #{mencionado} ***** #{firmante}"
   ]
   tweets[0]
 
 firmantePorDefecto = 'un ciudadano'
 registerHelper 'firmantePorDefecto', -> firmantePorDefecto
 
+mencionadoPorDefecto = '@robotest2'
+registerHelper 'mencionadoPorDefecto', -> mencionadoPorDefecto
+
 Template.home.created = ->
   Meteor.call 'twitterInit', (err, result) ->
-    console.log err
+    console.log err if err
     console.log result
   reset 'firmante'
+  reset 'mencionado'
 
 Template.home.tweet = ->
   return tuit()
 
 Template.home.events
   "click #yo-firmo": ->
-    console.log get( 'firmante' )
-    tuit = tuit( get( 'firmante' ) or firmantePorDefecto )
-    Meteor.call 'twitterTweet', tuit, (err, result) ->
-      console.log err
-      console.log result
+    firmante = get( 'firmante' ) or firmantePorDefecto
+    mencionado = get( 'mencionado' ) or mencionadoPorDefecto
+    tuit = tuit firmante, mencionado
+    alert tuit
+    #Meteor.call 'twitterTweet', tuit
 
   "change #firmante": (e) ->
     set 'firmante', $( e.currentTarget ).val()
+
+  "change #mencionado": (e) ->
+    set 'mencionado', $( e.currentTarget ).val()

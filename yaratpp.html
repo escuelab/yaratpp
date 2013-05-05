@@ -12,6 +12,11 @@
 </template>
 
 <template name="firmante">
-  <input id="firmante" value="{{la 'firmante'}}"
+  <input id="firmante" value="{{get 'firmante'}}"
     placeholder="{{firmantePorDefecto}}">
+</template>
+
+<template name="mencionado">
+  <input id="mencionado" value="{{get 'mencionado'}}"
+    placeholder="{{mencionadoPorDefecto}}">
 </template>
