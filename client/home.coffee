@@ -68,11 +68,14 @@ Template.home.events
   "change #firmante": (e) ->
     set 'firmante', $( e.currentTarget ).val()
 
-  "change #mencionado": (e) ->
+  "blur #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
 
-Template.mencionado.rendered = ->
-  posibles = get 'posibles-mencionados'
+Deps.autorun ->
+  posibles = get( 'posibles-mencionados' )
+  console.log posibles
 
+  console.log $( "#mencionado" ).size()
   $( "#mencionado" ).autocomplete
     source: posibles
+

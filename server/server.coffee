@@ -42,4 +42,4 @@ Meteor.methods
         mencionado: mencionado
 
       return 'Firma registrada'
-      #TwitterClient.tweet tuit
+      TwitterClient.tweet tuit
