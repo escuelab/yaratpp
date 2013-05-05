@@ -1,3 +1,7 @@
+Firmas = new Meteor.Collection 'firmas'
+# Meteor.publish 'firmas', ->
+#   Firmas.find()
+
 TwitterClient =
   init: ->
     settings = Meteor.settings.public
@@ -19,5 +23,23 @@ Meteor.methods
   twitterInit: ->
     TwitterClient.init()
 
-  twitterTweet: (tuit) ->
-    TwitterClient.tweet tuit
+  twitterTweet: (tuit, firmante, mencionado) ->
+    if tuit.length > 140
+      throw new Meteor.Error """
+      El tweet formado tiene más de 140 caracteres
+      """
+
+    firmaAnterior = Firmas.findOne
+      firmante: firmante
+      mencionado: mencionado
+
+    if firmaAnterior
+      throw new Meteor.Error """Ya se ha enviado una denuncia a esa
+      funcionario y para ese firmante"""
+    else
+      Firmas.insert
+        firmante: firmante
+        mencionado: mencionado
+
+      return 'Firma registrada'
+      #TwitterClient.tweet tuit

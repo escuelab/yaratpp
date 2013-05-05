@@ -12,8 +12,10 @@ registerHelper = (p1,p2) ->
 registerHelper 'set', @set
 registerHelper 'get', @get
 
-### APP ###
+# Firmas = new Meteor.Collection 'firmas'
+# Meteor.subscribe 'firmas'
 
+### APP ###
 tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
   mencionado = Template.mencionado() unless mencionado
@@ -44,9 +46,12 @@ Template.home.events
   "click #yo-firmo": ->
     firmante = get( 'firmante' ) or firmantePorDefecto
     mencionado = get( 'mencionado' ) or mencionadoPorDefecto
-    tuit = tuit firmante, mencionado
-    alert tuit
-    #Meteor.call 'twitterTweet', tuit
+
+    elTweet = tuit firmante, mencionado
+    alert elTweet
+    Meteor.call 'twitterTweet', elTweet, firmante, mencionado, (err, result) ->
+      alert err if err
+      alert result if result
 
   "change #firmante": (e) ->
     set 'firmante', $( e.currentTarget ).val()
