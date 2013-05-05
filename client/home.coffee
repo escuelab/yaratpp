@@ -26,7 +26,7 @@ tuit = (firmante, mencionado) ->
     "cc #{mencionado} ++aaaaaaaaaa+++ #{firmante}"
     "cc #{mencionado} ***** #{firmante}"
   ]
-  tweets[0]
+  tweets[get 'curr-tweet']
 
 firmantePorDefecto = 'un ciudadano'
 registerHelper 'firmantePorDefecto', -> firmantePorDefecto
@@ -54,6 +54,8 @@ Template.home.created = ->
 Template.home.tweet = ->
   return tuit()
 
+Template.home.opts = [1,2,3]
+
 Template.home.events
   "click #yo-firmo": ->
     firmante = get( 'firmante' ) or firmantePorDefecto
@@ -71,11 +73,16 @@ Template.home.events
   "blur #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
 
-Deps.autorun ->
-  posibles = get( 'posibles-mencionados' )
-  console.log posibles
+  'click .opt': (e) ->
+    val = parseInt( $(e.currentTarget).data('value') ) - 1
+    set 'curr-tweet', val
 
-  console.log $( "#mencionado" ).size()
+Template.mencionado.rendered = ->
+  posibles = get( 'posibles-mencionados' )
   $( "#mencionado" ).autocomplete
     source: posibles
 
+Deps.autorun ->
+  posibles = get( 'posibles-mencionados' )
+  $( "#mencionado" ).autocomplete
+    source: posibles

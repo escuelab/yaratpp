@@ -7,6 +7,10 @@
 </body>
 
 <template name="home">
+  {{#each opts}}
+  <div class="opt" data-value="{{this}}">{{this}}</div>
+  {{/each}}
+  
   {{{ tweet }}}
   <input id="yo-firmo" type="button" value="firmo" />
 </template>
