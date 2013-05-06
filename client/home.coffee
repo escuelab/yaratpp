@@ -36,12 +36,23 @@ registerHelper 'firmantePorDefecto', -> firmantePorDefecto
 mencionadoPorDefecto = Meteor.settings.public.DEFAULT_MENCIONADO
 registerHelper 'mencionadoPorDefecto', -> mencionadoPorDefecto
 
+registerHelper 'linkear', (text) ->
+  regexLink = /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi
+  arr = regexLink.exec text
+  text = text.replace arr[0], "<a href='#{arr[0]}' target='_blank'>#{arr[0]}</a>"
+
+  regexHashtag = /#[-a-zA-Z0-9]{1,50}/gi
+  arr = regexHashtag.exec text
+  hashUrl = "https://twitter.com/search?q=#{arr[0].replace '#', '%23'}&src=hash"
+  text = text.replace arr[0], "<a href='#{hashUrl}' target='_blank'>#{arr[0]}</a>"
+
+  text
+
 Template.home.created = ->
   set 'curr-tweet', 0
 
   Meteor.call 'twitterInit', (err, result) ->
     console.log err if err
-    console.log result
 
   reset 'firmante'
   reset 'mencionado'
