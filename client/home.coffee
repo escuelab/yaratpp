@@ -78,8 +78,6 @@ Template.home.opts = [1,2,3]
 
 Template.home.charCount = ->
   tuit1 = tuit(getFirmante(), getMencionado())
-  console.log tuit1
-  console.log tuit1.length
   tuit1.length
 
 getFirmante = ->
