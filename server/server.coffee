@@ -4,10 +4,8 @@ Firmas.allow
   update: -> false
   remove: -> false
 
-Meteor.publish 'firmas', (firmante, mencionado) ->
-  Firmas.findOne
-    firmante: firmante
-    mencionado: mencionado
+Meteor.publish 'firmas', ->
+  Firmas.find()
 
 TwitterClient =
   init: ->
@@ -51,8 +49,7 @@ Meteor.methods
       mencionado: mencionado
 
     if firmaAnterior
-      throw new Meteor.Error """Ya se ha enviado una denuncia a esa
-      funcionario y para ese firmante"""
+      throw new Meteor.Error "Ya has twitteado a ese funcionario tu opinión"
     else
       Firmas.insert
         firmante: firmante

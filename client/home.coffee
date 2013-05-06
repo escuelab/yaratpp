@@ -16,17 +16,17 @@ registerHelper 'get', (key) ->
 registerHelper 'getStr', (key) ->
   JSON.stringify get( key )
 
-#Firmas = new Meteor.Collection 'firmas'
-#Meteor.subscribe 'firmas', get( 'firmante' ) or firmantePorDefecto, get( 'mencionado' ) or mencionadoPorDefecto
+Firmas = new Meteor.Collection 'firmas'
+Meteor.subscribe 'firmas'
 
 ### APP ###
 tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
   mencionado = Template.mencionado() unless mencionado
   tweets = [
-    "yo #{firmante} le pido a usted #{mencionado} que mi libertad de expresión no se negocie en secreto en el TPP. #yaratpp http://bit.ly/yaratpp"
-    "Sr/Sra #{mencionado} le pedimos que establezca límites no negociables que garanticen nuestros derechos en el TPP #{firmante} http://bit.ly/yaratpp"
-    "Sr/Sra #{mencionado} negociar el #TPP en secreto, desde ya, restringue nuestra libertad de expresión att #firmante #YaraTPPhttp://bit.ly/yaratpp"
+    "yo #{firmante} le digo a ud. #{mencionado} que mi libertad de expresión no se negocia. #yaratpp http://bit.ly/yaratpp"
+    "Sr/Sra #{mencionado} le pido que establezca límites no negociables que garanticen nuestros derechos en el TPP. #{firmante} http://bit.ly/yaratpp"
+    "Sr/Sra #{mencionado} negociar el #TPP en secreto, desde ya, restringue nuestra libertad de expresión att #{firmante} #YaraTPP"
   ]
   tweets[get 'curr-tweet']
 
@@ -60,25 +60,22 @@ Template.home.tweet = ->
 
 Template.home.opts = [1,2,3]
 
+getFirmante = ->
+  get( 'firmante' ) or firmantePorDefecto
+
+getMencionado = ->
+  get( 'mencionado' ) or mencionadoPorDefecto
+
 Template.home.events
   "click #yo-firmo": ->
-    firmante = get( 'firmante' ) or firmantePorDefecto
-    mencionado = get( 'mencionado' ) or mencionadoPorDefecto
+    firmante = getFirmante()
+    mencionado = getMencionado()
 
     elTweet = tuit firmante, mencionado
 
     Meteor.call 'twitterTweet', elTweet, firmante, mencionado, (err, result) ->
       alert err if err
       alert result if result
-
-      # firma = Firmas.findOne
-      #   firmante: firmante
-      #   mencionado: mencionado
-
-      # console.log firma
-
-      # if firma?.url
-      #   alert firma?.url
 
   'keypress #firmante': (e) ->
     elem = e.currentTarget
@@ -94,7 +91,7 @@ Template.home.events
 
   "change #firmante": (e) ->
     val = $( e.currentTarget ).val()
-    set 'firmante', val if val
+    set 'firmante', val
 
   "blur #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
@@ -119,3 +116,8 @@ Template.mencionado.rendered = ->
 
 Deps.autorun ->
   setupAutocomplete()
+
+Firmas.find().observe
+  changed: (oldD, newD) ->
+    if oldD.url and oldD.firmante is getFirmante() and oldD.mencionado is getMencionado()
+      window.location = oldD.url
