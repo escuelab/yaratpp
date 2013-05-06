@@ -48,7 +48,7 @@ registerHelper 'linkear', (text) ->
   arr = text.match regexHashtag
   if arr
     for match in arr
-      hashUrl = "https://twitter.com/match[0]?q=#{match.replace '#', '%23'}&src=hash"
+      hashUrl = "https://twitter.com/search?q=#{match.replace '#', '%23'}&src=hash"
       text = text.replace match, "<a href='#{hashUrl}' target='_blank'>#{match}</a>"
 
   text
