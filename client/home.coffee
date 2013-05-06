@@ -24,9 +24,9 @@ tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
   mencionado = Template.mencionado() unless mencionado
   tweets = [
-    "yo #{firmante} le digo a ud. #{mencionado} que mi libertad de expresión no se negocia. #yaratpp http://bit.ly/yaratpp"
-    "Sr/Sra #{mencionado} le pido que establezca límites no negociables que garanticen nuestros derechos en el #TPP. #{firmante} #YaraTPP"
-    "Sr/Sra #{mencionado} negociar el #TPP en secreto restringue nuestra libertad de expresión. att #{firmante} http://bit.ly/yaratpp"
+    "Sr(a) #{mencionado}: protega mi libertad en Internet en el capítulo de propiedad intelectual del TPP. Atte #{firmante} http://bit.ly/yaratpp",
+    "Sr(a) #{mencionado}: establezca límites no negociables que garanticen nuestros derechos en el TPP. Atte #{firmante} #esono #yaratpp",
+    "Sr(a) #{mencionado}: necesitamos que el Perú negocie el TPP por-y-con nosotros, y no a nuestras espaldas. Atte #{firmante} http://bit.ly/yaratpp"
   ]
   tweets[get 'curr-tweet']
 
@@ -76,6 +76,12 @@ Template.home.tweet = ->
 
 Template.home.opts = [1,2,3]
 
+Template.home.charCount = ->
+  tuit1 = tuit(getFirmante(), getMencionado())
+  console.log tuit1
+  console.log tuit1.length
+  tuit1.length
+
 getFirmante = ->
   get( 'firmante' ) or firmantePorDefecto
 
@@ -95,19 +101,20 @@ Template.home.events
 
   'keypress #firmante': (e) ->
     elem = e.currentTarget
+    val = $( elem ).val()
+    set 'firmante', val
     if elem.value.length >= firmantePorDefecto.length or firmanteInputWidth(elem) < 240
       set 'width-firmante', firmanteInputWidth(elem)
 
   'blur #firmante': (e) ->
     elem = e.currentTarget
+    val = $( elem ).val()
+    set 'firmante', val
     if elem.value
       set 'width-firmante', firmanteInputWidth(elem)
     else
       set 'width-firmante', 240
-
-  "change #firmante": (e) ->
-    val = $( e.currentTarget ).val()
-    set 'firmante', val
+    
 
   "blur #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
