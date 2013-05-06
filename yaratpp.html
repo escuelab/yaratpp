@@ -1,5 +1,6 @@
 <head>
-  <title>yaratpp</title>
+  <title>#yaratpp</title>
+  <link href='http://fonts.googleapis.com/css?family=Average+Sans' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -9,12 +10,11 @@
 <template name="home">
   <h1>#yaratpp</h1>
   
-  <div>Elige una frase y twittea por tus derechos!</div>
+  
   {{#each opts}}
   <div class="opt" data-value="{{this}}">{{this}}</div>
   {{/each}}
-  
-  <br/><br/><br/>
+  <div class="help-text">&lt;&dash;&dash; Elige una frase y twittea por tus derechos!</div>
   
   <div class="tweet">
   {{{ tweet }}}
