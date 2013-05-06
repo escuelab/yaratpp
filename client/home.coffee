@@ -10,21 +10,23 @@ registerHelper = (p1,p2) ->
   Handlebars.registerHelper p1, p2
 
 registerHelper 'set', set
-registerHelper 'get', get
+registerHelper 'get', (key) ->
+  result = get 'key'
+  return result or ''
 registerHelper 'getStr', (key) ->
   JSON.stringify get( key )
 
-# Firmas = new Meteor.Collection 'firmas'
-# Meteor.subscribe 'firmas'
+#Firmas = new Meteor.Collection 'firmas'
+#Meteor.subscribe 'firmas', get( 'firmante' ) or firmantePorDefecto, get( 'mencionado' ) or mencionadoPorDefecto
 
 ### APP ###
 tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
   mencionado = Template.mencionado() unless mencionado
   tweets = [
-    "cc #{mencionado} --asdasdasdas-- #{firmante}"
-    "cc #{mencionado} ++aaaaaaaaaa+++ #{firmante}"
-    "cc #{mencionado} ***** #{firmante}"
+    "yo #{firmante} le pido a usted #{mencionado} que mi libertad de expresión no se negocie en secreto en el TPP. #yaratpp http://bit.ly/yaratpp"
+    "Sr/Sra #{mencionado} le pedimos que establezca límites no negociables que garanticen nuestros derechos en el TPP #{firmante} http://bit.ly/yaratpp"
+    "Sr/Sra #{mencionado} negociar el #TPP en secreto, desde ya, restringue nuestra libertad de expresión att #firmante #YaraTPPhttp://bit.ly/yaratpp"
   ]
   tweets[get 'curr-tweet']
 
@@ -35,6 +37,8 @@ mencionadoPorDefecto = '@robotest2'
 registerHelper 'mencionadoPorDefecto', -> mencionadoPorDefecto
 
 Template.home.created = ->
+  set 'curr-tweet', 0
+
   Meteor.call 'twitterInit', (err, result) ->
     console.log err if err
     console.log result
@@ -62,13 +66,23 @@ Template.home.events
     mencionado = get( 'mencionado' ) or mencionadoPorDefecto
 
     elTweet = tuit firmante, mencionado
-    alert elTweet
+
     Meteor.call 'twitterTweet', elTweet, firmante, mencionado, (err, result) ->
       alert err if err
       alert result if result
 
+      # firma = Firmas.findOne
+      #   firmante: firmante
+      #   mencionado: mencionado
+
+      # console.log firma
+
+      # if firma?.url
+      #   alert firma?.url
+
   "change #firmante": (e) ->
-    set 'firmante', $( e.currentTarget ).val()
+    val = $( e.currentTarget ).val()
+    set 'firmante', val if val
 
   "blur #mencionado": (e) ->
     set 'mencionado', $( e.currentTarget ).val()
@@ -81,8 +95,12 @@ Template.mencionado.rendered = ->
   posibles = get( 'posibles-mencionados' )
   $( "#mencionado" ).autocomplete
     source: posibles
+    minChars: 0
 
 Deps.autorun ->
   posibles = get( 'posibles-mencionados' )
-  $( "#mencionado" ).autocomplete
+  $( "#mencionado" ).autocomplete(
     source: posibles
+    minChars: 0
+  ).focus ->
+    $(this).trigger "keydown.autocomplete"  if @value is ""

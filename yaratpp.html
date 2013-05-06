@@ -7,20 +7,28 @@
 </body>
 
 <template name="home">
+  <h1>#yaratpp</h1>
+  
+  <div>Elige una frase y twittea por tus derechos!</div>
   {{#each opts}}
   <div class="opt" data-value="{{this}}">{{this}}</div>
   {{/each}}
   
+  <br/><br/><br/>
+  
+  <div class="tweet">
   {{{ tweet }}}
-  <input id="yo-firmo" type="button" value="firmo" />
+  </div>
+
+  <input id="yo-firmo" type="button" value="twittea!" />
 </template>
 
 <template name="firmante">
-  <input id="firmante"
+  <input id="firmante" value="{{get 'firmante'}}"
     placeholder="{{firmantePorDefecto}}">
 </template>
 
 <template name="mencionado">
-  <input id="mencionado"
+  <input id="mencionado" 
     placeholder="{{mencionadoPorDefecto}}">
 </template>

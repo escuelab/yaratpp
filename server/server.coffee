@@ -1,6 +1,13 @@
 Firmas = new Meteor.Collection 'firmas'
-# Meteor.publish 'firmas', ->
-#   Firmas.find()
+Firmas.allow
+  insert: -> false
+  update: -> false
+  remove: -> false
+
+Meteor.publish 'firmas', (firmante, mencionado) ->
+  Firmas.findOne
+    firmante: firmante
+    mencionado: mencionado
 
 TwitterClient =
   init: ->
@@ -12,12 +19,22 @@ TwitterClient =
       access_token_secret:  settings.TWITTER_TOKEN_SECRET
     'success'
 
-  tweet: ( tuit ) ->
+  tweet: ( tuit, firmante, mencionado ) ->
     @T.post "statuses/update",
       status: tuit
     , (err, reply) ->
       console.log err if err
-      console.log reply
+
+      url = "https://twitter.com/#{Meteor.settings.TWITTER_USER}/status/#{reply.id_str}"
+
+      Fiber = Npm.require 'fibers'
+      Fiber( ->
+        firma = Firmas.findOne
+          firmante: firmante
+          mencionado: mencionado
+
+        Firmas.update firma._id, { $set:{ url:url } }
+      ).run()
 
 Meteor.methods
   twitterInit: ->
@@ -41,5 +58,5 @@ Meteor.methods
         firmante: firmante
         mencionado: mencionado
 
-      return 'Firma registrada'
-      TwitterClient.tweet tuit
+      TwitterClient.tweet tuit, firmante, mencionado
+      return "Tweet enviado. Sigue a @#{Meteor.settings.TWITTER_USER}"
