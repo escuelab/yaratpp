@@ -96,16 +96,16 @@ Template.home.events
     val = parseInt( $(e.currentTarget).data('value') ) - 1
     set 'curr-tweet', val
 
-Template.mencionado.rendered = ->
-  posibles = get( 'posibles-mencionados' )
-  $( "#mencionado" ).autocomplete
-    source: posibles
-    minChars: 0
-
-Deps.autorun ->
+setupAutocomplete = ->
   posibles = get( 'posibles-mencionados' )
   $( "#mencionado" ).autocomplete(
     source: posibles
-    minChars: 0
+    minLength: 0
   ).focus ->
-    $(this).trigger "keydown.autocomplete"  if @value is ""
+    $(this).autocomplete 'search'
+
+Template.mencionado.rendered = ->
+  setupAutocomplete()
+
+Deps.autorun ->
+  setupAutocomplete()
