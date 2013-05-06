@@ -24,9 +24,9 @@ tuit = (firmante, mencionado) ->
   firmante = Template.firmante() unless firmante
   mencionado = Template.mencionado() unless mencionado
   tweets = [
-    "Sr(a) #{mencionado}: protega mi libertad en Internet en el capítulo de propiedad intelectual del TPP. Atte #{firmante} http://bit.ly/yaratpp",
-    "Sr(a) #{mencionado}: establezca límites no negociables que garanticen nuestros derechos en el TPP. Atte #{firmante} #esono #yaratpp",
-    "Sr(a) #{mencionado}: necesitamos que el Perú negocie el TPP por-y-con nosotros, y no a nuestras espaldas. Atte #{firmante} http://bit.ly/yaratpp"
+    "Sr/a #{mencionado}: Proteja mi libertad en el capítulo de propiedad intelectual del TPP. Atte. #{firmante} http://bit.ly/yaratpp #yaratpp"
+    "Sr/a #{mencionado}: Garantice nuestros derechos en el TPP. Hay límites no negociables. Atte. #{firmante} http://bit.ly/yaratpp #esono"
+    "Sr/a #{mencionado}: Negocien el TPP por-y-con nosotros, y no a nuestras espaldas. Atte. #{firmante} http://bit.ly/yaratpp #yaratpp"
   ]
   tweets[get 'curr-tweet']
 
