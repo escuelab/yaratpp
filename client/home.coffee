@@ -11,7 +11,7 @@ registerHelper = (p1,p2) ->
 
 registerHelper 'set', set
 registerHelper 'get', (key) ->
-  result = get 'key'
+  result = get key
   return result or ''
 registerHelper 'getStr', (key) ->
   JSON.stringify get( key )
@@ -82,8 +82,15 @@ Template.home.events
 
   'keypress #firmante': (e) ->
     elem = e.currentTarget
-    if elem.value.length >= firmantePorDefecto.length
-      elem.style.width = ((elem.value.length + 1) * 22) + 'px'
+    if elem.value.length >= firmantePorDefecto.length or firmanteInputWidth(elem) < 240
+      set 'width-firmante', firmanteInputWidth(elem)
+
+  'blur #firmante': (e) ->
+    elem = e.currentTarget
+    if elem.value
+      set 'width-firmante', firmanteInputWidth(elem)
+    else
+      set 'width-firmante', 240
 
   "change #firmante": (e) ->
     val = $( e.currentTarget ).val()
@@ -95,6 +102,9 @@ Template.home.events
   'click .opt': (e) ->
     val = parseInt( $(e.currentTarget).data('value') ) - 1
     set 'curr-tweet', val
+
+firmanteInputWidth = (elem) ->
+  ((elem.value.length + 1) * 22)
 
 setupAutocomplete = ->
   posibles = get( 'posibles-mencionados' )
