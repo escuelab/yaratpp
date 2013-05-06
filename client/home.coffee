@@ -75,7 +75,7 @@ Template.home.events
 
     Meteor.call 'twitterTweet', elTweet, firmante, mencionado, (err, result) ->
       alert err if err
-      alert result if result
+      #alert result if result
 
   'keypress #firmante': (e) ->
     elem = e.currentTarget
