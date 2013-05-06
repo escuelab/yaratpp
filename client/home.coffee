@@ -33,7 +33,7 @@ tuit = (firmante, mencionado) ->
 firmantePorDefecto = 'un ciudadano'
 registerHelper 'firmantePorDefecto', -> firmantePorDefecto
 
-mencionadoPorDefecto = '@robotest2'
+mencionadoPorDefecto = Meteor.settings.public.DEFAULT_MENCIONADO
 registerHelper 'mencionadoPorDefecto', -> mencionadoPorDefecto
 
 Template.home.created = ->
@@ -79,6 +79,11 @@ Template.home.events
 
       # if firma?.url
       #   alert firma?.url
+
+  'keypress #firmante': (e) ->
+    elem = e.currentTarget
+    if elem.value.length >= firmantePorDefecto.length
+      elem.style.width = ((elem.value.length + 1) * 22) + 'px'
 
   "change #firmante": (e) ->
     val = $( e.currentTarget ).val()
