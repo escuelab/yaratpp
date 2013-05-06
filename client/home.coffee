@@ -25,8 +25,8 @@ tuit = (firmante, mencionado) ->
   mencionado = Template.mencionado() unless mencionado
   tweets = [
     "yo #{firmante} le digo a ud. #{mencionado} que mi libertad de expresión no se negocia. #yaratpp http://bit.ly/yaratpp"
-    "Sr/Sra #{mencionado} le pido que establezca límites no negociables que garanticen nuestros derechos en el TPP. #{firmante} http://bit.ly/yaratpp"
-    "Sr/Sra #{mencionado} negociar el #TPP en secreto, desde ya, restringue nuestra libertad de expresión att #{firmante} #YaraTPP"
+    "Sr/Sra #{mencionado} le pido que establezca límites no negociables que garanticen nuestros derechos en el #TPP. #{firmante} #YaraTPP"
+    "Sr/Sra #{mencionado} negociar el #TPP en secreto restringue nuestra libertad de expresión. att #{firmante} http://bit.ly/yaratpp"
   ]
   tweets[get 'curr-tweet']
 
@@ -38,13 +38,18 @@ registerHelper 'mencionadoPorDefecto', -> mencionadoPorDefecto
 
 registerHelper 'linkear', (text) ->
   regexLink = /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi
-  arr = regexLink.exec text
-  text = text.replace arr[0], "<a href='#{arr[0]}' target='_blank'>#{arr[0]}</a>"
+  arr = text.match regexLink
+  if arr
+    for match in arr
+      if startsWith match, 'http'
+        text = text.replace match, "<a href='#{match}' target='_blank'>#{match}</a>"
 
-  regexHashtag = /#[-a-zA-Z0-9]{1,50}/gi
-  arr = regexHashtag.exec text
-  hashUrl = "https://twitter.com/search?q=#{arr[0].replace '#', '%23'}&src=hash"
-  text = text.replace arr[0], "<a href='#{hashUrl}' target='_blank'>#{arr[0]}</a>"
+  regexHashtag = /#[-a-zA-Z0-9]{1,50}\b/gi
+  arr = text.match regexHashtag
+  if arr
+    for match in arr
+      hashUrl = "https://twitter.com/match[0]?q=#{match.replace '#', '%23'}&src=hash"
+      text = text.replace match, "<a href='#{hashUrl}' target='_blank'>#{match}</a>"
 
   text
 
